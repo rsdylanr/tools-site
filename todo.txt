@@ -1,0 +1,9 @@
+password thingies
+
+symbols
+numbers
+letters
+words
+make sure the password isnt common
+
+crazy way of generating them
