@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GitHub Tools Suite</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #f5f5f5;
+        display: flex;
+        height: 100vh;
+    }
+
+    #sidebar {
+        width: 260px;
+        background: #24292e;
+        color: white;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+
+    #sidebar h2 {
+        margin-top: 0;
+        font-size: 20px;
+    }
+
+    .tool-btn {
+        display: block;
+        padding: 10px;
+        margin: 8px 0;
+        background: #2f363d;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background .2s;
+    }
+    .tool-btn:hover {
+        background: #3d444c;
+    }
+
+    #content {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .tool-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+        padding: 10px;
+        font-size: 16px;
+        margin: 5px 0;
+    }
+
+    button {
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+    <h2>Tools</h2>
+    <div id="tool-list"></div>
+</div>
+
+<div id="content">
+    <h1>Welcome</h1>
+    <p>Select a tool from the left to begin.</p>
+</div>
+
+<script>
+/* ============================================================
+   TOOL REGISTRY SYSTEM
+   ============================================================ */
+
+const ToolRegistry = {
+    tools: {},
+
+    register(name, module) {
+        this.tools[name] = module;
+        this.renderSidebar();
+    },
+
+    renderSidebar() {
+        const list = document.getElementById("tool-list");
+        list.innerHTML = "";
+
+        Object.keys(this.tools).forEach(name => {
+            const btn = document.createElement("div");
+            btn.className = "tool-btn";
+            btn.textContent = name;
+            btn.onclick = () => this.loadTool(name);
+            list.appendChild(btn);
+        });
+    },
+
+    loadTool(name) {
+        const tool = this.tools[name];
+        const content = document.getElementById("content");
+        content.innerHTML = "";
+        content.appendChild(tool.render());
+    }
+};
+
+/* ============================================================
+   TOOL MODULE: PASSWORD GENERATOR
+   ============================================================ */
+
+const PasswordGenerator = {
+    render() {
+        const container = document.createElement("div");
+        container.className = "tool-container";
+
+        container.innerHTML = `
+            <h2>Password Generator</h2>
+            <label>Length:</label>
+            <input id="pw-length" type="number" value="16" min="4" max="128">
+
+            <label><input type="checkbox" id="pw-upper" checked> Uppercase</label><br>
+            <label><input type="checkbox" id="pw-lower" checked> Lowercase</label><br>
+            <label><input type="checkbox" id="pw-num" checked> Numbers</label><br>
+            <label><input type="checkbox" id="pw-special" checked> Special Characters</label><br>
+
+            <button id="pw-generate">Generate</button>
+
+            <h3>Result:</h3>
+            <input id="pw-output" type="text" readonly style="width:100%;">
+        `;
+
+        container.querySelector("#pw-generate").onclick = () => {
+            const length = parseInt(container.querySelector("#pw-length").value);
+            const useUpper = container.querySelector("#pw-upper").checked;
+            const useLower = container.querySelector("#pw-lower").checked;
+            const useNum = container.querySelector("#pw-num").checked;
+            const useSpecial = container.querySelector("#pw-special").checked;
+
+            const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const lower = "abcdefghijklmnopqrstuvwxyz";
+            const nums = "0123456789";
+            const special = "!@#$%^&*()-_=+[]{};:,.<>/?";
+
+            let chars = "";
+            if (useUpper) chars += upper;
+            if (useLower) chars += lower;
+            if (useNum) chars += nums;
+            if (useSpecial) chars += special;
+
+            let pw = "";
+            for (let i = 0; i < length; i++) {
+                pw += chars[Math.floor(Math.random() * chars.length)];
+            }
+
+            container.querySelector("#pw-output").value = pw;
+        };
+
+        return container;
+    }
+};
+
+/* Register the first tool */
+ToolRegistry.register("Password Generator", PasswordGenerator);
+
+</script>
+
+</body>
+</html>
