@@ -1,32 +1,24 @@
-# GitHub Tools Suite
+# TypeLab
 
-A modular-but-monolithic single-page tools suite deployed automatically using GitHub Pages.
+A focused typing trainer and browser-based utility shelf deployed automatically using GitHub Pages.
 
 ## Features
 
-- Modular tool system
-- Dynamic sidebar
-- Password generator tool
-- Easy to extend with new tools
+- Monkeytype-inspired typing practice with configurable 30/60/120 second sessions
+- Live WPM, accuracy, and completed-test stats
+- Text case converter, word/character counter, and slug generator
+- Local password generator, file inspector, and text-file downloader
+- Live Markdown preview
+- JSON formatter/minifier and Base64 encoder/decoder
+- Responsive dark/light interface with no server or build step
+
+Everything runs locally in the browser. Files and pasted content are not uploaded.
 
 ## Deployment
 
-This repository uses GitHub Actions to deploy automatically to GitHub Pages.
-
-Push to the `main` branch and the site will update within seconds.
+GitHub Actions deploys the site to GitHub Pages whenever changes land on `main`.
 
 ## Adding New Tools
 
-Inside `index.html`, create a new module:
-
-```js
-const MyTool = {
-    render() {
-        const div = document.createElement("div");
-        div.className = "tool-container";
-        div.innerHTML = "<h2>My Tool</h2>";
-        return div;
-    }
-};
-
-ToolRegistry.register("My Tool", MyTool);
+The page is intentionally dependency-free. Add a navigation button and a `.tool-view`
+section in `index.html`, then wire its controls in the bottom script.
